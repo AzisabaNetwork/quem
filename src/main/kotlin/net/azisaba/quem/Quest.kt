@@ -9,6 +9,9 @@ interface Quest {
     companion object {
         private val instances = mutableSetOf<Quest>()
 
+        val all: Set<Quest>
+            get() = instances.toSet()
+
         fun create(type: QuestType, party: Party): Quest {
             return QuestImpl(type, party).also { instances.add(it) }
         }
@@ -32,7 +35,7 @@ interface Quest {
         return ! isPlayer(player)
     }
 
-    fun onEnd(reason: EndReason) {
+    fun end(reason: EndReason) {
         party.quest = null
         instances.remove(this)
 
@@ -44,6 +47,8 @@ interface Quest {
     enum class EndReason {
         CANCEL,
         COMPLETE,
-        PLUGIN
+        OTHER,
+        PLUGIN,
+        RELOAD
     }
 }

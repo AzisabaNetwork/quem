@@ -25,4 +25,9 @@ open class Registry<T: Keyed> {
         map[entry.key()] = entry
         return entry
     }
+
+    fun unregister(key: Key): T {
+        map.remove(key)
+        return get(key) ?: throw IllegalArgumentException()
+    }
 }

@@ -52,8 +52,8 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
         return players.contains(player)
     }
 
-    override fun onEnd(reason: Quest.EndReason) {
-        super.onEnd(reason)
+    override fun end(reason: Quest.EndReason) {
+        super.end(reason)
 
         party.quest = null
         panel.kill()
