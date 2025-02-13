@@ -8,9 +8,8 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver
-import net.azisaba.quem.Party
 import net.azisaba.quem.Party.Companion.party
-import net.azisaba.quem.Quest
+import net.azisaba.quem.QuemLoader
 import net.azisaba.quem.QuestType
 import net.azisaba.quem.gui.PartyCreateUI
 import net.azisaba.quem.gui.PartyMenuUI
@@ -22,11 +21,8 @@ import org.bukkit.entity.Player
 object QuemCommand {
     fun create(): LiteralArgumentBuilder<CommandSourceStack> {
         return Commands.literal("quem")
-            .then(Commands.literal("grant")
-                .then(Commands.argument("targets", ArgumentTypes.players())
-                    .then(Commands.argument("type", QuestTypeArgumentType)
-                        .executes { ctx -> grantCommand(ctx) })))
-            .then(Commands.literal("party")
+            .then(Commands.literal("debug1")
+                .requires { it.sender.hasPermission("quem.debug") }
                 .executes { ctx ->
                     val player = (ctx.source.executor.takeIf { it is Player } ?: return@executes Command.SINGLE_SUCCESS) as Player
 
@@ -38,24 +34,32 @@ object QuemCommand {
 
                     Command.SINGLE_SUCCESS
                 })
-            .then(Commands.literal("quests")
+            .then(Commands.literal("debug2")
+                .requires { it.sender.hasPermission("quem.debug") }
                 .executes { ctx ->
                     val player = (ctx.source.executor.takeIf { it is Player } ?: return@executes Command.SINGLE_SUCCESS) as Player
                     QuestUI(player)
                     Command.SINGLE_SUCCESS
                 })
+            .then(Commands.literal("grant")
+                .requires { it.sender.hasPermission("quem.grant") }
+                .then(Commands.argument("targets", ArgumentTypes.players())
+                    .then(Commands.argument("type", QuestTypeArgumentType)
+                        .executes { ctx -> grantCommand(ctx) })))
             .then(Commands.literal("progress")
+                .requires { it.sender.hasPermission("quem.progress") }
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("requirement", StringArgumentType.word())
                         .then(Commands.argument("formula", FormulaArgumentType)
                             .executes { ctx -> progressCommand(ctx) }))))
+            .then(Commands.literal("reload")
+                .requires { it.sender.hasPermission("quem.reload") }
+                .executes { ctx -> reloadCommand(ctx) })
             .then(Commands.literal("revoke")
+                .requires { it.sender.hasPermission("quem.revoke") }
                 .then(Commands.argument("targets", ArgumentTypes.players())
                     .then(Commands.argument("type", QuestTypeArgumentType)
                         .executes { ctx -> revokeCommand(ctx) })))
-            .then(Commands.literal("start")
-                .then(Commands.argument("type", QuestTypeArgumentType)
-                    .executes { ctx -> startCommand(ctx) }))
     }
 
     private fun grantCommand(ctx: CommandContext<CommandSourceStack>): Int {
@@ -88,6 +92,11 @@ object QuemCommand {
         return Command.SINGLE_SUCCESS
     }
 
+    private fun reloadCommand(ctx: CommandContext<CommandSourceStack>): Int {
+        QuemLoader.load()
+        return Command.SINGLE_SUCCESS
+    }
+
     private fun revokeCommand(ctx: CommandContext<CommandSourceStack>): Int {
         val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
         val type = ctx.getArgument("type", QuestType::class.java)
@@ -96,18 +105,6 @@ object QuemCommand {
             target.questTypeMap = target.questTypeMap.also { it.remove(type) }
         }
 
-        return Command.SINGLE_SUCCESS
-    }
-
-    private fun startCommand(ctx: CommandContext<CommandSourceStack>): Int {
-        val executor = ctx.source.executor
-
-        if (executor !is Player) {
-            return Command.SINGLE_SUCCESS
-        }
-
-        val type = ctx.getArgument("type", QuestType::class.java)
-        Quest.create(type, executor.party ?: Party.solo(executor))
         return Command.SINGLE_SUCCESS
     }
 }
