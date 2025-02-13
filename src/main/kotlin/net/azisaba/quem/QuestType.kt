@@ -17,9 +17,6 @@ class QuestType(override val key: Key, private val data: QuestType): Keyed {
     val name: Component
         get() = data.name.toTextComponent()
 
-    val description: List<Component>
-        get() = data.description.map { it.toTextComponent() }
-
     val icon: ItemStack
         get() = ItemStack(data.icon).also {
             val meta = it.itemMeta
@@ -28,12 +25,21 @@ class QuestType(override val key: Key, private val data: QuestType): Keyed {
             it.itemMeta = meta
         }
 
+    val description: List<Component>
+        get() = data.description.map { it.toTextComponent() }
+
     val category: QuestCategory
         get() = QuestCategories.get(data.category.toKey())!!
 
-    val requirements: Set<QuestRequirement>
-        get() = data.requirements.map { QuestRequirement(it.key, it.value) }.toSet()
-
     val location: Location
         get() = net.azisaba.quem.data.Location(data.location)
+
+    val maxPlays: Int? = data.maxPlays
+
+    val maxPlayers: Int? = data.maxPlayers
+
+    val minPlayers: Int? = data.minPlayers
+
+    val requirements: Set<QuestRequirement>
+        get() = data.requirements.map { QuestRequirement(it.key, it.value) }.toSet()
 }

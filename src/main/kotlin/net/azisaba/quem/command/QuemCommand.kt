@@ -16,11 +16,16 @@ import net.azisaba.quem.gui.PartyCreateUI
 import net.azisaba.quem.gui.PartyMenuUI
 import net.azisaba.quem.gui.QuestUI
 import net.azisaba.quem.util.CommandSyntaxException
+import net.azisaba.quem.util.questTypeMap
 import org.bukkit.entity.Player
 
 object QuemCommand {
     fun create(): LiteralArgumentBuilder<CommandSourceStack> {
         return Commands.literal("quem")
+            .then(Commands.literal("grant")
+                .then(Commands.argument("targets", ArgumentTypes.players())
+                    .then(Commands.argument("type", QuestTypeArgumentType)
+                        .executes { ctx -> grantCommand(ctx) })))
             .then(Commands.literal("party")
                 .executes { ctx ->
                     val player = (ctx.source.executor.takeIf { it is Player } ?: return@executes Command.SINGLE_SUCCESS) as Player
@@ -44,9 +49,31 @@ object QuemCommand {
                     .then(Commands.argument("requirement", StringArgumentType.word())
                         .then(Commands.argument("formula", FormulaArgumentType)
                             .executes { ctx -> progressCommand(ctx) }))))
+            .then(Commands.literal("revoke")
+                .then(Commands.argument("targets", ArgumentTypes.players())
+                    .then(Commands.argument("type", QuestTypeArgumentType)
+                        .executes { ctx -> revokeCommand(ctx) })))
             .then(Commands.literal("start")
                 .then(Commands.argument("type", QuestTypeArgumentType)
                     .executes { ctx -> startCommand(ctx) }))
+    }
+
+    private fun grantCommand(ctx: CommandContext<CommandSourceStack>): Int {
+        val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
+        val type = ctx.getArgument("type", QuestType::class.java)
+
+        for (target in targets) {
+            val map = target.questTypeMap
+
+            if (map.containsKey(type)) {
+                continue
+            }
+
+            map[type] = 0
+            target.questTypeMap = map
+        }
+
+        return Command.SINGLE_SUCCESS
     }
 
     private fun progressCommand(ctx: CommandContext<CommandSourceStack>): Int {
@@ -58,6 +85,17 @@ object QuemCommand {
         val formula = ctx.getArgument("formula", FormulaArgumentType.Formula::class.java)
 
         quest.progresses[requirement] = formula.calculate(base)
+        return Command.SINGLE_SUCCESS
+    }
+
+    private fun revokeCommand(ctx: CommandContext<CommandSourceStack>): Int {
+        val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
+        val type = ctx.getArgument("type", QuestType::class.java)
+
+        for (target in targets) {
+            target.questTypeMap = target.questTypeMap.also { it.remove(type) }
+        }
+
         return Command.SINGLE_SUCCESS
     }
 

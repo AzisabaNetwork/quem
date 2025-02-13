@@ -3,6 +3,7 @@ package net.azisaba.quem.impl
 import com.tksimeji.visualkit.Visualkit
 import net.azisaba.quem.Party
 import net.azisaba.quem.Quest
+import net.azisaba.quem.QuestType
 import net.azisaba.quem.gui.PartyUI
 import org.bukkit.entity.Player
 
@@ -61,6 +62,12 @@ open class PartyImpl(entrepreneur: Player): Party {
 
     override fun isNotMember(player: Player?): Boolean {
         return ! isMember(player)
+    }
+
+    override fun hasPermission(type: QuestType): Boolean {
+        val maxPlayers = type.maxPlayers
+        val minPlayers = type.minPlayers
+        return (maxPlayers == null || size <= maxPlayers) && (minPlayers == null || minPlayers <= size)
     }
 
     override fun disband() {

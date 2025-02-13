@@ -31,6 +31,7 @@ class Quem : JavaPlugin() {
 
         if (! pluginDirectory.exists() && ! pluginDirectory.mkdir()) {
             pluginLogger.error(Component.text("Failed to create plugin directory.").color(NamedTextColor.RED))
+            config
         }
 
         pluginDirectory.walk().forEach { file ->

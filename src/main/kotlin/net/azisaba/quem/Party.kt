@@ -40,6 +40,8 @@ interface Party: Iterable<Player> {
 
     fun isNotMember(player: Player?): Boolean
 
+    fun hasPermission(type: QuestType): Boolean
+
     fun disband() {
         instances.remove(this)
     }

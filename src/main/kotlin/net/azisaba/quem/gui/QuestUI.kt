@@ -10,6 +10,7 @@ import net.azisaba.quem.Quest
 import net.azisaba.quem.QuestCategory
 import net.azisaba.quem.registry.QuestCategories
 import net.azisaba.quem.registry.QuestTypes
+import net.azisaba.quem.util.hasPermission
 import net.azisaba.quem.util.plainText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -103,6 +104,16 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
                     val party = player.party ?: Party.solo(player)
 
                     if (party.leader != player) {
+                        player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
+                        return@handler
+                    }
+
+                    if (! party.hasPermission(questType)) {
+                        player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
+                        return@handler
+                    }
+
+                    if (party.any { ! it.hasPermission(questType) }) {
                         player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
                         return@handler
                     }

@@ -5,9 +5,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class QuestType(
     val name: String,
-    val description: List<String>,
     val icon: Icon,
-    val requirements: Map<String, Int>,
+    val description: List<String>,
     val category: String,
-    val location: Location
+    val location: Location,
+    val maxPlays: Int? = null,
+    val maxPlayers: Int? = null,
+    val minPlayers: Int? = null,
+    val requirements: Map<String, Int>
 )
