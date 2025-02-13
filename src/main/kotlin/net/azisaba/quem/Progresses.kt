@@ -8,7 +8,7 @@ class Progresses internal constructor(private val quest: Quest): Iterable<Mutabl
     }
 
     operator fun set(requirement: QuestRequirement, progress: Int) {
-        require(map.containsKey(requirement)) { "${requirement.key} is a requirement that is not defined in ${quest.type.key}." }
+        require(map.containsKey(requirement)) { "${requirement.key} is a requirement that is not defined in ${quest.type.key}" }
         map[requirement] = progress
 
         if (map.all { it.key.amount <= it.value }) {

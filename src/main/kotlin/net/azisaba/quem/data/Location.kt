@@ -1,6 +1,7 @@
 package net.azisaba.quem.data
 
 import kotlinx.serialization.Serializable
+import net.azisaba.quem.util.toKey
 import org.bukkit.Bukkit
 
 @Serializable
@@ -14,5 +15,5 @@ data class Location(
 )
 
 fun Location(location: Location): org.bukkit.Location {
-    return org.bukkit.Location(Bukkit.getWorld(location.world), location.x, location.y, location.z, location.yaw, location.pitch)
+    return org.bukkit.Location(Bukkit.getWorld(location.world.toKey()), location.x, location.y, location.z, location.yaw, location.pitch)
 }

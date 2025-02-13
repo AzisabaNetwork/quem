@@ -38,7 +38,9 @@ interface Party: Iterable<Player> {
 
     fun isMember(player: Player?): Boolean
 
-    fun isNotMember(player: Player?): Boolean
+    fun isNotMember(player: Player?): Boolean {
+        return ! isMember(player)
+    }
 
     fun hasPermission(type: QuestType): Boolean
 

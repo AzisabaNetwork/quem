@@ -2,6 +2,7 @@ package net.azisaba.quem
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
+import net.azisaba.quem.data.Config
 import net.azisaba.quem.listener.PlayerListener
 import net.azisaba.quem.registry.QuestTypes
 import net.kyori.adventure.key.Key
@@ -17,6 +18,8 @@ class Quem : JavaPlugin() {
 
         lateinit var plugin: Quem
 
+        lateinit var pluginConfig: Config
+
         val pluginLogger: ComponentLogger
             get() = plugin.componentLogger
 
@@ -27,15 +30,18 @@ class Quem : JavaPlugin() {
     override fun onEnable() {
         plugin = this
 
-        server.pluginManager.registerEvents(PlayerListener, this)
-
         if (! pluginDirectory.exists() && ! pluginDirectory.mkdir()) {
-            pluginLogger.error(Component.text("Failed to create plugin directory.").color(NamedTextColor.RED))
+            pluginLogger.error(Component.text("Failed to create plugin directory").color(NamedTextColor.RED))
             config
         }
 
+        saveDefaultConfig()
+        pluginConfig = Yaml.default.decodeFromStream(File(pluginDirectory, "config.yml").inputStream())
+
+        server.pluginManager.registerEvents(PlayerListener, this)
+
         pluginDirectory.walk().forEach { file ->
-            if (! file.isFile || (file.extension != "yml" && file.extension != "yaml")) {
+            if (! file.isFile || file.name == "config.yml" || (file.extension != "yml" && file.extension != "yaml")) {
                 return@forEach
             }
 

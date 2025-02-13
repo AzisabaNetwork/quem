@@ -3,6 +3,7 @@ package net.azisaba.quem
 import net.azisaba.quem.impl.QuestImpl
 import net.azisaba.quem.impl.SoloPartyImpl
 import net.azisaba.quem.gui.QuestPanelUI
+import org.bukkit.entity.Player
 
 interface Quest {
     companion object {
@@ -17,15 +18,19 @@ interface Quest {
 
     val party: Party
 
-    val requirement: Int
-
-    val progress: Int
-
     val progresses: Progresses
+
+    val players: Set<Player>
 
     val panel: QuestPanelUI
 
-    fun onProgressChanged()
+    fun removePlayer(player: Player)
+
+    fun isPlayer(player: Player?): Boolean
+
+    fun isNotPlayer(player: Player?): Boolean {
+        return ! isPlayer(player)
+    }
 
     fun onEnd(reason: EndReason) {
         party.quest = null

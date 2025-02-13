@@ -34,11 +34,11 @@ open class PartyImpl(entrepreneur: Player): Party {
 
     override fun addMember(member: Player) {
         if (hasQuest()) {
-            throw UnsupportedOperationException("Members cannot be added to a party during a quest.")
+            throw UnsupportedOperationException("Members cannot be added to a party during a quest")
         }
 
         if (Party.MAX_SIZE <= size) {
-            throw UnsupportedOperationException("The maximum party size is ${Party.MAX_SIZE}. No more members can be added.")
+            throw UnsupportedOperationException("The maximum party size is ${Party.MAX_SIZE}. No more members can be added")
         }
 
         _members.add(member)
@@ -46,7 +46,12 @@ open class PartyImpl(entrepreneur: Player): Party {
     }
 
     override fun removeMember(member: Player) {
+        if (isNotMember(member)) {
+            throw IllegalArgumentException("${member.name} is not a member of the party")
+        }
+
         _members.remove(member)
+        quest?.removePlayer(member)
 
         if (member == leader || size <= 0) {
             disband()
@@ -60,10 +65,6 @@ open class PartyImpl(entrepreneur: Player): Party {
         return _members.contains(player)
     }
 
-    override fun isNotMember(player: Player?): Boolean {
-        return ! isMember(player)
-    }
-
     override fun hasPermission(type: QuestType): Boolean {
         val maxPlayers = type.maxPlayers
         val minPlayers = type.minPlayers
@@ -71,6 +72,8 @@ open class PartyImpl(entrepreneur: Player): Party {
     }
 
     override fun disband() {
+        members.forEach(this::removeMember)
+
         Visualkit.getSessions(PartyUI::class.java)
             .filter { it.party == this }
             .forEach(PartyUI::close)

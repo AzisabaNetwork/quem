@@ -1,7 +1,9 @@
 package net.azisaba.quem.gui
 
 import com.tksimeji.visualkit.SharedPanelUI
+import net.azisaba.quem.Quem
 import net.azisaba.quem.Quest
+import net.azisaba.quem.util.toTextComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -10,35 +12,52 @@ class QuestPanelUI(private val quest: Quest): SharedPanelUI() {
     private var progress = 0
     private var partySize = 0
 
-    private val members = quest.party.members.toList()
+    private val party = quest.party
+
+    private val members = quest.players.toList()
 
     init {
-        title = Component.text("Reincarnation").color(NamedTextColor.YELLOW)
+        title = Quem.pluginConfig.panel.title.toTextComponent()
 
         setLine(1, Component.text("進行中: ").color(NamedTextColor.GRAY)
             .append(quest.type.name.colorIfAbsent(NamedTextColor.WHITE)))
         setLine(2, Component.text("進捗: ").color(NamedTextColor.GRAY)
             .append(Component.text("\${progress}").color(NamedTextColor.GREEN))
             .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
-            .append(Component.text(quest.requirement).color(NamedTextColor.WHITE)))
+            .append(Component.text(quest.progresses.sumOf { it.key.amount }).color(NamedTextColor.WHITE)))
         setLine(4, Component.text("パーティー (\${partySize}):").color(NamedTextColor.GRAY))
-        setLine(5 + 1 + members.size, Component.text("いますぐ ").color(NamedTextColor.GRAY)
-            .append(Component.text("azisaba.net").color(NamedTextColor.YELLOW))
-            .append(Component.text(" で遊べ！").color(NamedTextColor.GRAY)))
+        setLine(5 + 1 + members.size, Quem.pluginConfig.panel.footer.toTextComponent())
     }
 
     override fun onTick() {
         super.onTick()
-        progress = quest.progress
+        progress = quest.progresses.sumOf { it.value }
         partySize = quest.party.members.size
 
         for ((index, member) in members.withIndex()) {
-            val online = quest.party.isMember(member)
+            val isPlayer = quest.isPlayer(member)
 
-            setLine(5 + index, Component.space()
-                .append(Component.text(member.name).color(if (online) NamedTextColor.AQUA else NamedTextColor.RED))
+            val component = Component.space()
+                .append(Component.text(member.name)
+                    .color(if (isPlayer) NamedTextColor.AQUA else NamedTextColor.RED)
+                    .decoration(TextDecoration.STRIKETHROUGH, if (isPlayer) TextDecoration.State.NOT_SET else TextDecoration.State.TRUE))
                 .appendSpace()
-                .append(if (online) Component.text(member.health.toInt()).color(NamedTextColor.GREEN).append(Component.text("♥").color(NamedTextColor.RED)) else Component.text("切断").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)))
+                .append(when {
+                    isPlayer -> {
+                        val health = member.health.toInt()
+                        val healthColor = when {
+                            health <= 4 -> NamedTextColor.RED
+                            health <= 8 -> NamedTextColor.GOLD
+                            else -> NamedTextColor.GREEN
+                        }
+
+                        Component.text(health).color(healthColor).append(Component.text("♥").color(NamedTextColor.RED))
+                    }
+                    party.isNotMember(member) -> Component.text("離脱").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)
+                    else -> Component.text("脱落").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)
+                })
+
+            setLine(5 + index, component)
         }
     }
 }
