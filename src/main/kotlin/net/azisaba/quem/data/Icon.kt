@@ -23,8 +23,8 @@ fun ItemStack(icon: Icon): ItemStack {
     }
 
     if (icon.aura) {
-        item.addEnchantment(Enchantment.INFINITY, 1)
-        item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        meta.addEnchant(Enchantment.INFINITY, 1, false)
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
     }
 
     return item.also { it.itemMeta = meta }
