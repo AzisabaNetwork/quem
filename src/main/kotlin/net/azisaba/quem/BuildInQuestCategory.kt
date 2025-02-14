@@ -13,7 +13,7 @@ class BuildInQuestCategory(
     iconModel: Key? = null,
     iconAura: Boolean = false
 ) : QuestCategory(key, net.azisaba.quem.data.QuestCategory(
-    name = name.toComponentString(),
+    title = name.toComponentString(),
     icon = Icon(
         type = iconType.key().asString(),
         model = iconModel?.asString(),

@@ -8,7 +8,10 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.Color
+import org.bukkit.Location
 import org.bukkit.NamespacedKey
+import org.bukkit.Particle
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 
@@ -51,6 +54,29 @@ fun Player.hasPermission(type: QuestType): Boolean {
     val plays = questTypeMap[type]
     val maxPlays = type.maxPlays
     return plays != null && (maxPlays == null || plays < maxPlays)
+}
+
+fun Player.navigateTo(location: Location, renderDistance: Double, gap: Double) {
+    val playerLocation = this.location
+    val distance = playerLocation.distance(location)
+
+    var i = 0.0
+
+    while (i <= distance) {
+        val x = playerLocation.x + (location.x - playerLocation.x) * (i / distance)
+        val y = playerLocation.y + (location.y - playerLocation.y) * (i / distance)
+        val z = playerLocation.z + (location.z - playerLocation.z) * (i / distance)
+
+        val particleLocation = Location(location.world, x, y, z)
+
+        i += gap
+
+        if (renderDistance <= particleLocation.distance(particleLocation)) {
+            break
+        }
+
+        spawnParticle(Particle.DUST, particleLocation, 1, Particle.DustOptions(Color.AQUA, 0.5F))
+    }
 }
 
 fun String.toKey(): Key {

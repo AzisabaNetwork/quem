@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class QuestCategory(
-    val name: String,
+    val title: String,
     val icon: Icon
 )

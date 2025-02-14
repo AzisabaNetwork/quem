@@ -27,7 +27,8 @@ open class Registry<T: Keyed> {
     }
 
     fun unregister(key: Key): T {
+        val value = get(key) ?: throw IllegalArgumentException("'${key.asString()}' is an invalid key")
         map.remove(key)
-        return get(key) ?: throw IllegalArgumentException()
+        return value
     }
 }

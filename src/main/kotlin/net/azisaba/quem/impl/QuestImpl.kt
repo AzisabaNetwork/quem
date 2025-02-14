@@ -3,9 +3,12 @@ package net.azisaba.quem.impl
 import net.azisaba.quem.*
 import net.azisaba.quem.gui.QuestPanelUI
 import net.azisaba.quem.util.hasPermission
+import net.azisaba.quem.util.navigateTo
 import net.azisaba.quem.util.questTypeMap
+import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitRunnable
 
 class QuestImpl(override val type: QuestType, override val party: Party) : Quest {
     override val players: Set<Player>
@@ -15,7 +18,22 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
 
     override val progresses = Progresses(this)
 
+    override val guide: Guide?
+        get() = type.guides.firstOrNull { it.isFilled(this) }
+
     override val panel: QuestPanelUI
+
+    private val guideRunnable = object : BukkitRunnable() {
+        override fun run() {
+            val guide = guide ?: return
+            val title = guide.title
+
+            for (player in players.filter { it.inventory.heldItemSlot == 8 }) {
+                player.sendActionBar(if (title != null) Component.translatable("quest.guiding_with_title", title) else Component.text("quest.guiding"))
+                player.navigateTo(guide.location, Math.PI, 0.05)
+            }
+        }
+    }
 
     private val _players = party.members.toMutableSet()
 
@@ -35,6 +53,8 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
             panel.addAudience(it)
             it.teleport(type.location)
         }
+
+        guideRunnable.runTaskTimerAsynchronously(Quem.plugin, 0L, 5L)
     }
 
     override fun removePlayer(player: Player) {
@@ -57,6 +77,8 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
 
         party.quest = null
         panel.kill()
+
+        guideRunnable.cancel()
 
         for (member in party) {
             member.questTypeMap = member.questTypeMap.also {

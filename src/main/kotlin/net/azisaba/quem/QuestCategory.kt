@@ -9,13 +9,13 @@ import net.kyori.adventure.text.Component
 import org.bukkit.inventory.ItemStack
 
 open class QuestCategory(override val key: Key, private val data: QuestCategory): Keyed {
-    val name: Component
-        get() = data.name.toTextComponent()
+    val title: Component
+        get() = data.title.toTextComponent()
 
     val icon: ItemStack
         get() = ItemStack(data.icon).also {
             val meta = it.itemMeta
-            meta.displayName(name)
+            meta.displayName(title)
             it.itemMeta = meta
         }
 }

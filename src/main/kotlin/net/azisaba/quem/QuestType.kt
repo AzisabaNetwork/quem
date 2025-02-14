@@ -14,13 +14,13 @@ import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 
 class QuestType(override val key: Key, private val data: QuestType): Keyed {
-    val name: Component
-        get() = data.name.toTextComponent()
+    val title: Component
+        get() = data.title.toTextComponent()
 
     val icon: ItemStack
         get() = ItemStack(data.icon).also {
             val meta = it.itemMeta
-            meta.displayName(name.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE))
+            meta.displayName(title.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE))
             meta.lore(description.map { it.colorIfAbsent(NamedTextColor.GRAY).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE) })
             it.itemMeta = meta
         }
@@ -40,6 +40,7 @@ class QuestType(override val key: Key, private val data: QuestType): Keyed {
 
     val minPlayers: Int? = data.minPlayers
 
-    val requirements: Set<QuestRequirement>
-        get() = data.requirements.map { QuestRequirement(it.key, it.value) }.toSet()
+    val guides: List<Guide> = data.guides.map { Guide( it) }.toList()
+
+    val requirements: Set<QuestRequirement> = data.requirements.map { QuestRequirement(it.key, it.value) }.toSet()
 }

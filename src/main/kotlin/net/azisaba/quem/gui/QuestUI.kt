@@ -32,7 +32,7 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
     private val currentCategories = chunkedCategories.firstOrNull { it.contains(category) } ?: throw IllegalStateException()
 
     private val questTypes = QuestTypes.entries
-        .filter { (category == null || it.category == category) && it.name.plainText.contains(query, ignoreCase = true) }
+        .filter { (category == null || it.category == category) && it.title.plainText.contains(query, ignoreCase = true) }
         .toList()
 
     @Element(9)

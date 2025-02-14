@@ -20,7 +20,7 @@ class QuestPanelUI(private val quest: Quest): SharedPanelUI() {
         title = Quem.pluginConfig.panel.title.toTextComponent()
 
         setLine(1, Component.text("進行中: ").color(NamedTextColor.GRAY)
-            .append(quest.type.name.colorIfAbsent(NamedTextColor.WHITE)))
+            .append(quest.type.title.colorIfAbsent(NamedTextColor.WHITE)))
         setLine(2, Component.text("進捗: ").color(NamedTextColor.GRAY)
             .append(Component.text("\${progress}").color(NamedTextColor.GREEN))
             .append(Component.text("/").color(NamedTextColor.DARK_GRAY))

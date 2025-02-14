@@ -25,6 +25,8 @@ interface Quest {
 
     val players: Set<Player>
 
+    val guide: Guide?
+
     val panel: QuestPanelUI
 
     fun removePlayer(player: Player)
