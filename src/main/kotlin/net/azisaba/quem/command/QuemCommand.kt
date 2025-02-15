@@ -17,6 +17,7 @@ import net.azisaba.quem.gui.PartyMenuUI
 import net.azisaba.quem.gui.QuestUI
 import net.azisaba.quem.extension.CommandSyntaxException
 import net.azisaba.quem.extension.questTypeMap
+import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
 object QuemCommand {
@@ -77,6 +78,8 @@ object QuemCommand {
         val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
         val type = ctx.getArgument("type", QuestType::class.java)
 
+        val changes = mutableListOf<Player>()
+
         for (target in targets) {
             val map = target.questTypeMap
 
@@ -86,8 +89,15 @@ object QuemCommand {
 
             map[type] = 0
             target.questTypeMap = map
+            changes.add(target)
         }
 
+        if (changes.isEmpty()) {
+            ctx.source.sender.sendMessage(Component.text("No changed were made."))
+            return Command.SINGLE_SUCCESS
+        }
+
+        ctx.source.sender.sendMessage(Component.text("Granted '${type.key.asString()}' for ${changes.joinToString(",")}."))
         return Command.SINGLE_SUCCESS
     }
 
@@ -100,11 +110,14 @@ object QuemCommand {
         val formula = ctx.getArgument("formula", FormulaArgumentType.Formula::class.java)
 
         quest.progresses[requirement] = formula.calculate(base)
+
+        ctx.source.sender.sendMessage(Component.text("Changed quest requirement '${requirement.key}' progress to ${quest.progresses[requirement]}."))
         return Command.SINGLE_SUCCESS
     }
 
     private fun reloadCommand(ctx: CommandContext<CommandSourceStack>): Int {
         QuemLoader.load()
+        ctx.source.sender.sendMessage(Component.text("Reload completed."))
         return Command.SINGLE_SUCCESS
     }
 
@@ -112,10 +125,23 @@ object QuemCommand {
         val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
         val type = ctx.getArgument("type", QuestType::class.java)
 
+        val changes = mutableListOf<Player>()
+
         for (target in targets) {
+            if (! target.questTypeMap.containsKey(type)) {
+                continue
+            }
+
             target.questTypeMap = target.questTypeMap.also { it.remove(type) }
+            changes.add(target)
         }
 
+        if (changes.isEmpty()) {
+            ctx.source.sender.sendMessage(Component.text("No changed were made."))
+            return Command.SINGLE_SUCCESS
+        }
+
+        ctx.source.sender.sendMessage(Component.text("Revoked '${type.key.asString()}' for ${changes.joinToString(",")}."))
         return Command.SINGLE_SUCCESS
     }
 
@@ -123,12 +149,20 @@ object QuemCommand {
         val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
         val stage = ctx.getArgument("stage", Stage::class.java)
 
+        var mounts = 0
+        var queues = 0
+
         for (target in targets) {
             target.party?.takeIf { it.hasQuest() }?.let {
-                stage.queue.add(it)
+                if (stage.queue.add(it)) {
+                    mounts += 1
+                } else {
+                    queues += 1
+                }
             }
         }
 
+        ctx.source.sender.sendMessage(Component.text("$mounts party(s) mounted, $queues party(s) added to queue."))
         return Command.SINGLE_SUCCESS
     }
 
@@ -136,12 +170,20 @@ object QuemCommand {
         val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
         val stage = ctx.getArgument("stage", Stage::class.java)
 
+        var unmounts = 0
+
         for (target in targets) {
             target.party?.takeIf { it.hasQuest() }?.let {
+                if (stage.isMounted(it)) {
+                    return@let
+                }
+
                 stage.unmount(it)
+                unmounts -= 1
             }
         }
 
+        ctx.source.sender.sendMessage(Component.text("$unmounts party(s) unmounted."))
         return Command.SINGLE_SUCCESS
     }
 }

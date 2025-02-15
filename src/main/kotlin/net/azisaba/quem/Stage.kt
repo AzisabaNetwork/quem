@@ -26,6 +26,10 @@ class Stage(override val key: Key, private val data: net.azisaba.quem.data.Stage
     private val originalLocations = mutableMapOf<Player, Location>()
 
     private fun mount(party: Party) {
+        if (isMounted(party)) {
+            throw IllegalArgumentException("The party is already mounted.")
+        }
+
         if (maxParties <= size) {
             throw UnsupportedOperationException()
         }
@@ -40,6 +44,10 @@ class Stage(override val key: Key, private val data: net.azisaba.quem.data.Stage
     }
 
     fun unmount(party: Party) {
+        if (! isMounted(party)) {
+            throw IllegalArgumentException("The party is not mounted.")
+        }
+
         party.stage = null
 
         party.forEach {
@@ -51,6 +59,10 @@ class Stage(override val key: Key, private val data: net.azisaba.quem.data.Stage
         queue.first?.let { mount(it) }
     }
 
+    fun isMounted(party: Party): Boolean {
+        return parties.contains(party)
+    }
+
     class Queue(override val stage: Stage): StageLike {
         val first: Party?
             get() = set.firstOrNull()
@@ -60,14 +72,15 @@ class Stage(override val key: Key, private val data: net.azisaba.quem.data.Stage
 
         private val set = linkedSetOf<Party>()
 
-        fun add(party: Party) {
+        fun add(party: Party): Boolean {
             if (stage.parties.size < stage.maxParties) {
                 stage.mount(party)
-                return
+                return true
             }
 
             set.add(party)
             party.stage = this
+            return false
         }
 
         fun remove(party: Party) {
