@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Stage(
     val title: String,
     val location: Location,
+    val unmountLocation: Location? = null,
     val maxParties: Int = 1
 )

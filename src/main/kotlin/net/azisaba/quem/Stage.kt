@@ -12,6 +12,15 @@ class Stage(override val key: Key, private val data: net.azisaba.quem.data.Stage
     val location: Location
         get() = net.azisaba.quem.data.Location(data.location)
 
+    val unmountLocation: Location?
+        get() = run {
+            if (data.unmountLocation != null) {
+                net.azisaba.quem.data.Location(data.unmountLocation)
+            } else {
+                null
+            }
+        }
+
     val maxParties = data.maxParties
 
     val queue = Queue(this)
@@ -51,7 +60,7 @@ class Stage(override val key: Key, private val data: net.azisaba.quem.data.Stage
         party.stage = null
 
         party.forEach {
-            it.teleport(originalLocations[it]!!)
+            it.teleport(if (unmountLocation == null) originalLocations[it]!! else unmountLocation!!)
             originalLocations.remove(it)
         }
 
