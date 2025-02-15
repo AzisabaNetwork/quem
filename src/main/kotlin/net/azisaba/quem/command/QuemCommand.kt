@@ -94,7 +94,7 @@ object QuemCommand {
             return Command.SINGLE_SUCCESS
         }
 
-        ctx.source.sender.sendMessage(Component.text("Granted '${type.key.asString()}' for ${changes.joinToString(",")}."))
+        ctx.source.sender.sendMessage(Component.text("Granted '${type.key.asString()}' for ${changes.joinToString(", ") { it.name }}."))
         return Command.SINGLE_SUCCESS
     }
 
@@ -139,7 +139,7 @@ object QuemCommand {
             return Command.SINGLE_SUCCESS
         }
 
-        ctx.source.sender.sendMessage(Component.text("Revoked '${type.key.asString()}' for ${changes.joinToString(",")}."))
+        ctx.source.sender.sendMessage(Component.text("Revoked '${type.key.asString()}' for ${changes.joinToString(", ") { it.name }}."))
         return Command.SINGLE_SUCCESS
     }
 
