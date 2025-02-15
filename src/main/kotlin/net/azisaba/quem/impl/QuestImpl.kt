@@ -38,6 +38,10 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
     private val _players = party.members.toMutableSet()
 
     init {
+        if (party.hasQuest()) {
+            throw IllegalArgumentException("The party is already on a quest")
+        }
+
         if (type.maxPlayers != null && type.maxPlayers < party.size) {
             throw IllegalArgumentException("The maximum number of players specified by ${type.key.asString()} has been exceeded: ${party.size}")
         }

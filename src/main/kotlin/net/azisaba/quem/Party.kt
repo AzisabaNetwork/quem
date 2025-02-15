@@ -20,6 +20,10 @@ interface Party: Iterable<Player> {
 
         val Player.party: Party?
             get() = instances.firstOrNull { it.isMember(player) }
+
+        fun Player.hasParty(): Boolean {
+            return party != null
+        }
     }
 
     var quest: Quest?

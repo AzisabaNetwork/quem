@@ -2,6 +2,7 @@ package net.azisaba.quem.impl
 
 import com.tksimeji.visualkit.Visualkit
 import net.azisaba.quem.Party
+import net.azisaba.quem.Party.Companion.hasParty
 import net.azisaba.quem.Quest
 import net.azisaba.quem.QuestType
 import net.azisaba.quem.StageLike
@@ -45,7 +46,11 @@ open class PartyImpl(entrepreneur: Player): Party {
         }
 
         if (Party.MAX_SIZE <= size) {
-            throw UnsupportedOperationException("The maximum party size is ${Party.MAX_SIZE}. No more members can be added")
+            throw UnsupportedOperationException("The maximum party size is ${Party.MAX_SIZE}. No more members can be added.")
+        }
+
+        if (member.hasParty()) {
+            throw IllegalArgumentException("'${member.name}' is already in a party")
         }
 
         _members.add(member)
