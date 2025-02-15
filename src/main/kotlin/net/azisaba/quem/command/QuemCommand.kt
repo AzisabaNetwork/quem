@@ -9,6 +9,7 @@ import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver
 import net.azisaba.quem.Party.Companion.party
+import net.azisaba.quem.Quem
 import net.azisaba.quem.QuemLoader
 import net.azisaba.quem.QuestType
 import net.azisaba.quem.Stage
@@ -117,6 +118,7 @@ object QuemCommand {
 
     private fun reloadCommand(ctx: CommandContext<CommandSourceStack>): Int {
         QuemLoader.load()
+        Quem.plugin.reloadPluginConfig()
         ctx.source.sender.sendMessage(Component.text("Reload completed."))
         return Command.SINGLE_SUCCESS
     }

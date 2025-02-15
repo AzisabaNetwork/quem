@@ -34,10 +34,14 @@ class Quem : JavaPlugin() {
         }
 
         saveDefaultConfig()
-        pluginConfig = Yaml.default.decodeFromStream(File(pluginDirectory, "config.yml").inputStream())
+        reloadPluginConfig()
 
         server.pluginManager.registerEvents(PlayerListener, this)
 
         QuemLoader.load()
+    }
+
+    fun reloadPluginConfig() {
+        pluginConfig = Yaml.default.decodeFromStream(File(pluginDirectory, "config.yml").inputStream())
     }
 }
