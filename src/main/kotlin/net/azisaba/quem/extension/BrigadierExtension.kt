@@ -1,4 +1,4 @@
-package net.azisaba.quem.util
+package net.azisaba.quem.extension
 
 import com.mojang.brigadier.LiteralMessage
 import com.mojang.brigadier.exceptions.CommandSyntaxException

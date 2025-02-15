@@ -2,9 +2,9 @@ package net.azisaba.quem.impl
 
 import net.azisaba.quem.*
 import net.azisaba.quem.gui.QuestPanelUI
-import net.azisaba.quem.util.hasPermission
-import net.azisaba.quem.util.navigateTo
-import net.azisaba.quem.util.questTypeMap
+import net.azisaba.quem.extension.hasPermission
+import net.azisaba.quem.extension.navigateTo
+import net.azisaba.quem.extension.questTypeMap
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.entity.Player

@@ -3,7 +3,7 @@ package net.azisaba.quem
 import net.azisaba.quem.data.ItemStack
 import net.azisaba.quem.data.QuestCategory
 import net.azisaba.quem.registry.Keyed
-import net.azisaba.quem.util.toTextComponent
+import net.azisaba.quem.extension.toTextComponent
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import org.bukkit.inventory.ItemStack

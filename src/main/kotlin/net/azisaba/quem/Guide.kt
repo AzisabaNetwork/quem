@@ -2,7 +2,7 @@ package net.azisaba.quem
 
 import net.azisaba.quem.data.Guide
 import net.azisaba.quem.data.Location
-import net.azisaba.quem.util.toTextComponent
+import net.azisaba.quem.extension.toTextComponent
 import net.kyori.adventure.text.Component
 
 class Guide(private val data: Guide) {

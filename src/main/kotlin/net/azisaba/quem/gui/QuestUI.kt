@@ -10,8 +10,8 @@ import net.azisaba.quem.Quest
 import net.azisaba.quem.QuestCategory
 import net.azisaba.quem.registry.QuestCategories
 import net.azisaba.quem.registry.QuestTypes
-import net.azisaba.quem.util.hasPermission
-import net.azisaba.quem.util.plainText
+import net.azisaba.quem.extension.hasPermission
+import net.azisaba.quem.extension.plainText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material

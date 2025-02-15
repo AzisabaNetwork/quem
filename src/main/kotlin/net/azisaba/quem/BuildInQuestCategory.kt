@@ -1,7 +1,7 @@
 package net.azisaba.quem
 
 import net.azisaba.quem.data.Icon
-import net.azisaba.quem.util.toComponentString
+import net.azisaba.quem.extension.toComponentString
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import org.bukkit.Material

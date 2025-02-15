@@ -15,8 +15,8 @@ import net.azisaba.quem.Stage
 import net.azisaba.quem.gui.PartyCreateUI
 import net.azisaba.quem.gui.PartyMenuUI
 import net.azisaba.quem.gui.QuestUI
-import net.azisaba.quem.util.CommandSyntaxException
-import net.azisaba.quem.util.questTypeMap
+import net.azisaba.quem.extension.CommandSyntaxException
+import net.azisaba.quem.extension.questTypeMap
 import org.bukkit.entity.Player
 
 object QuemCommand {

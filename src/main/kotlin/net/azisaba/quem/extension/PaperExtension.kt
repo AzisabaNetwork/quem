@@ -1,4 +1,4 @@
-package net.azisaba.quem.util
+package net.azisaba.quem.extension
 
 import net.azisaba.quem.Quem
 import net.azisaba.quem.QuestType

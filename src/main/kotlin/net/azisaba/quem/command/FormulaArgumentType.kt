@@ -7,7 +7,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType
-import net.azisaba.quem.util.CommandSyntaxException
+import net.azisaba.quem.extension.CommandSyntaxException
 import java.util.concurrent.CompletableFuture
 
 object FormulaArgumentType: CustomArgumentType<FormulaArgumentType.Formula, String> {

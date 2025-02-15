@@ -1,7 +1,7 @@
 package net.azisaba.quem.data
 
 import kotlinx.serialization.Serializable
-import net.azisaba.quem.util.toKey
+import net.azisaba.quem.extension.toKey
 import org.bukkit.Bukkit
 
 @Serializable

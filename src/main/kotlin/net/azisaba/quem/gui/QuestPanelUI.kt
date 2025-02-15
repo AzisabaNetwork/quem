@@ -4,7 +4,7 @@ import com.tksimeji.visualkit.SharedPanelUI
 import net.azisaba.quem.Quem
 import net.azisaba.quem.Quest
 import net.azisaba.quem.Stage
-import net.azisaba.quem.util.toTextComponent
+import net.azisaba.quem.extension.toTextComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration

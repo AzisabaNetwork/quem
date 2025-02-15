@@ -1,6 +1,6 @@
 package net.azisaba.quem.data
 
-import net.azisaba.quem.util.toNamespacedKey
+import net.azisaba.quem.extension.toNamespacedKey
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment

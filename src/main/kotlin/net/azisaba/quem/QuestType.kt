@@ -4,8 +4,8 @@ import net.azisaba.quem.data.ItemStack
 import net.azisaba.quem.data.QuestType
 import net.azisaba.quem.registry.Keyed
 import net.azisaba.quem.registry.QuestCategories
-import net.azisaba.quem.util.toKey
-import net.azisaba.quem.util.toTextComponent
+import net.azisaba.quem.extension.toKey
+import net.azisaba.quem.extension.toTextComponent
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

@@ -1,6 +1,6 @@
 package net.azisaba.quem.registry
 
-import net.azisaba.quem.util.toNamespacedKey
+import net.azisaba.quem.extension.toNamespacedKey
 import net.kyori.adventure.key.Key
 import org.bukkit.NamespacedKey
 

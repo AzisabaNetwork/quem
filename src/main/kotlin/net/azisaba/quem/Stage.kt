@@ -1,7 +1,7 @@
 package net.azisaba.quem
 
 import net.azisaba.quem.registry.Keyed
-import net.azisaba.quem.util.toTextComponent
+import net.azisaba.quem.extension.toTextComponent
 import net.kyori.adventure.key.Key
 import org.bukkit.Location
 import org.bukkit.entity.Player
