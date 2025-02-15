@@ -24,6 +24,8 @@ interface Party: Iterable<Player> {
 
     var quest: Quest?
 
+    var stage: StageLike?
+
     var leader: Player
 
     val members: Set<Player>
@@ -31,6 +33,8 @@ interface Party: Iterable<Player> {
     val size: Int
 
     fun hasQuest(): Boolean
+
+    fun hasStage(): Boolean
 
     fun addMember(member: Player)
 

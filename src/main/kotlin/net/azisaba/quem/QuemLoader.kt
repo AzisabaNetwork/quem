@@ -4,6 +4,7 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import net.azisaba.quem.registry.QuestCategories
 import net.azisaba.quem.registry.QuestTypes
+import net.azisaba.quem.registry.Stages
 import net.kyori.adventure.key.Key
 import java.io.File
 
@@ -27,6 +28,8 @@ object QuemLoader {
 
         QuestTypes.entries.forEach { QuestTypes.unregister(it.key) }
 
+        Stages.entries.forEach { Stages.unregister(it.key) }
+
         for ((namespace, directory) in namespaces) {
             File(directory, "categories").takeIf { it.exists() }?.let {
                 loadQuestCategories(namespace, it)
@@ -35,7 +38,24 @@ object QuemLoader {
             File(directory, "types").takeIf { it.exists() }?.let {
                 loadQuestTypes(namespace, it)
             }
+
+            File(directory, "stages").takeIf { it.exists() }?.let {
+                loadStages(namespace, it)
+            }
         }
+    }
+
+    private fun loadQuestCategories(namespace: String, directory: File) {
+        directory.walk()
+            .filter { it.isFile && it.nameWithoutExtension.matches(keyRegex) && it.extension == "yml" }
+            .forEach { file ->
+                val data = Yaml.default.decodeFromStream<net.azisaba.quem.data.QuestCategory>(file.inputStream())
+
+                QuestCategories.register(QuestCategory(
+                    key = Key.key(namespace, file.nameWithoutExtension),
+                    data = data
+                ))
+            }
     }
 
     private fun loadQuestTypes(namespace: String, directory: File) {
@@ -51,13 +71,13 @@ object QuemLoader {
             }
     }
 
-    private fun loadQuestCategories(namespace: String, directory: File) {
+    private fun loadStages(namespace: String, directory: File) {
         directory.walk()
             .filter { it.isFile && it.nameWithoutExtension.matches(keyRegex) && it.extension == "yml" }
             .forEach { file ->
-                val data = Yaml.default.decodeFromStream<net.azisaba.quem.data.QuestCategory>(file.inputStream())
+                val data = Yaml.default.decodeFromStream<net.azisaba.quem.data.Stage>(file.inputStream())
 
-                QuestCategories.register(QuestCategory(
+                Stages.register(Stage(
                     key = Key.key(namespace, file.nameWithoutExtension),
                     data = data
                 ))

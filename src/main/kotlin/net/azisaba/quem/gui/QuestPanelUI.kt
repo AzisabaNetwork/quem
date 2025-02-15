@@ -3,6 +3,7 @@ package net.azisaba.quem.gui
 import com.tksimeji.visualkit.SharedPanelUI
 import net.azisaba.quem.Quem
 import net.azisaba.quem.Quest
+import net.azisaba.quem.Stage
 import net.azisaba.quem.util.toTextComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -16,8 +17,15 @@ class QuestPanelUI(private val quest: Quest): SharedPanelUI() {
 
     private val members = quest.players.toList()
 
+    private var staged = false
+
     init {
         title = Quem.pluginConfig.panel.title.toTextComponent()
+        init()
+    }
+
+    private fun init() {
+        clear()
 
         setLine(1, Component.text("進行中: ").color(NamedTextColor.GRAY)
             .append(quest.type.title.colorIfAbsent(NamedTextColor.WHITE)))
@@ -26,7 +34,6 @@ class QuestPanelUI(private val quest: Quest): SharedPanelUI() {
             .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
             .append(Component.text(quest.progresses.sumOf { it.key.amount }).color(NamedTextColor.WHITE)))
         setLine(4, Component.text("パーティー (\${partySize}):").color(NamedTextColor.GRAY))
-        setLine(5 + 1 + members.size, Quem.pluginConfig.panel.footer.toTextComponent())
     }
 
     override fun onTick() {
@@ -59,5 +66,31 @@ class QuestPanelUI(private val quest: Quest): SharedPanelUI() {
 
             setLine(5 + index, component)
         }
+
+        var index = 5 + partySize + 1
+
+        if (staged && ! party.hasStage()) {
+            init()
+        }
+
+        if (party.hasStage()) {
+            val stage = party.stage!!
+
+            if (stage is Stage) {
+                setLine(index, Component.text("ステージ: ").color(NamedTextColor.GRAY).append(stage.title.colorIfAbsent(NamedTextColor.WHITE)))
+            } else if (stage is Stage.Queue) {
+                setLine(index, Component.text("ステージキュー: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(stage.indexOf(party).plus(1).toString()).color(NamedTextColor.GREEN))
+                    .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
+                    .append(Component.text(stage.size).color(NamedTextColor.WHITE)))
+            }
+
+            staged = true
+            index += 2
+        } else {
+            staged = false
+        }
+
+        setLine(index, Quem.pluginConfig.panel.footer.toTextComponent())
     }
 }

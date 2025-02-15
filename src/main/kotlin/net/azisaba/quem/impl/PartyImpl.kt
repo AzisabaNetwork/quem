@@ -4,11 +4,14 @@ import com.tksimeji.visualkit.Visualkit
 import net.azisaba.quem.Party
 import net.azisaba.quem.Quest
 import net.azisaba.quem.QuestType
+import net.azisaba.quem.StageLike
 import net.azisaba.quem.gui.PartyUI
 import org.bukkit.entity.Player
 
 open class PartyImpl(entrepreneur: Player): Party {
     override var quest: Quest? = null
+
+    override var stage: StageLike? = null
 
     final override var leader: Player = entrepreneur
         set(value) {
@@ -30,6 +33,10 @@ open class PartyImpl(entrepreneur: Player): Party {
 
     override fun hasQuest(): Boolean {
         return quest != null
+    }
+
+    override fun hasStage(): Boolean {
+        return stage != null
     }
 
     override fun addMember(member: Player) {

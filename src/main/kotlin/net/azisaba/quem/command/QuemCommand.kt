@@ -11,6 +11,7 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import net.azisaba.quem.Party.Companion.party
 import net.azisaba.quem.QuemLoader
 import net.azisaba.quem.QuestType
+import net.azisaba.quem.Stage
 import net.azisaba.quem.gui.PartyCreateUI
 import net.azisaba.quem.gui.PartyMenuUI
 import net.azisaba.quem.gui.QuestUI
@@ -45,21 +46,31 @@ object QuemCommand {
                 .requires { it.sender.hasPermission("quem.grant") }
                 .then(Commands.argument("targets", ArgumentTypes.players())
                     .then(Commands.argument("type", QuestTypeArgumentType)
-                        .executes { ctx -> grantCommand(ctx) })))
+                        .executes(this::grantCommand))))
             .then(Commands.literal("progress")
                 .requires { it.sender.hasPermission("quem.progress") }
                 .then(Commands.argument("target", ArgumentTypes.player())
                     .then(Commands.argument("requirement", StringArgumentType.word())
                         .then(Commands.argument("formula", FormulaArgumentType)
-                            .executes { ctx -> progressCommand(ctx) }))))
+                            .executes(this::progressCommand)))))
             .then(Commands.literal("reload")
                 .requires { it.sender.hasPermission("quem.reload") }
-                .executes { ctx -> reloadCommand(ctx) })
+                .executes(this::reloadCommand))
             .then(Commands.literal("revoke")
                 .requires { it.sender.hasPermission("quem.revoke") }
                 .then(Commands.argument("targets", ArgumentTypes.players())
                     .then(Commands.argument("type", QuestTypeArgumentType)
-                        .executes { ctx -> revokeCommand(ctx) })))
+                        .executes(this::revokeCommand))))
+            .then(Commands.literal("stage")
+                .requires { it.sender.hasPermission("quem.stage") }
+                .then(Commands.literal("mount")
+                    .then(Commands.argument("targets", ArgumentTypes.players())
+                        .then(Commands.argument("stage", StageArgumentType)
+                            .executes(this::stageMountCommand))))
+                .then(Commands.literal("unmount")
+                    .then(Commands.argument("targets", ArgumentTypes.players())
+                        .then(Commands.argument("stage", StageArgumentType)
+                            .executes(this::stageUnmountCommand)))))
     }
 
     private fun grantCommand(ctx: CommandContext<CommandSourceStack>): Int {
@@ -103,6 +114,32 @@ object QuemCommand {
 
         for (target in targets) {
             target.questTypeMap = target.questTypeMap.also { it.remove(type) }
+        }
+
+        return Command.SINGLE_SUCCESS
+    }
+
+    private fun stageMountCommand(ctx: CommandContext<CommandSourceStack>): Int {
+        val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
+        val stage = ctx.getArgument("stage", Stage::class.java)
+
+        for (target in targets) {
+            target.party?.takeIf { it.hasQuest() }?.let {
+                stage.queue.add(it)
+            }
+        }
+
+        return Command.SINGLE_SUCCESS
+    }
+
+    private fun stageUnmountCommand(ctx: CommandContext<CommandSourceStack>): Int {
+        val targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver::class.java).resolve(ctx.source)
+        val stage = ctx.getArgument("stage", Stage::class.java)
+
+        for (target in targets) {
+            target.party?.takeIf { it.hasQuest() }?.let {
+                stage.unmount(it)
+            }
         }
 
         return Command.SINGLE_SUCCESS

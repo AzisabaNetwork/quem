@@ -18,3 +18,5 @@ permissions:
     default: op
   quem.revoke:
     default: op
+  quem.stage:
+    default: op
