@@ -4,15 +4,11 @@ import com.tksimeji.visualkit.ChestUI
 import com.tksimeji.visualkit.api.Element
 import com.tksimeji.visualkit.api.Size
 import com.tksimeji.visualkit.element.VisualkitElement
-import net.azisaba.quem.Party
+import net.azisaba.quem.*
 import net.azisaba.quem.Party.Companion.party
-import net.azisaba.quem.Quest
-import net.azisaba.quem.QuestCategory
 import net.azisaba.quem.registry.QuestCategories
 import net.azisaba.quem.registry.QuestTypes
-import net.azisaba.quem.extension.hasPermission
 import net.azisaba.quem.extension.plainText
-import net.azisaba.quem.extension.questTypeMap
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -33,7 +29,9 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
     private val currentCategories = chunkedCategories.firstOrNull { it.contains(category) } ?: throw IllegalStateException()
 
     private val questTypes = QuestTypes.entries
-        .filter { (category == null || it.category == category) && it.title.plainText.contains(query, ignoreCase = true) }
+        .filter { (category == null || it.category == category) &&
+                it.title.plainText.contains(query, ignoreCase = true) &&
+                (category != QuestCategories.DAILY || player.dailyQuestTypes.contains(it)) }
         .toList()
 
     @Element(9)
