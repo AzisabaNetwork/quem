@@ -12,6 +12,7 @@ import net.azisaba.quem.registry.QuestCategories
 import net.azisaba.quem.registry.QuestTypes
 import net.azisaba.quem.extension.hasPermission
 import net.azisaba.quem.extension.plainText
+import net.azisaba.quem.extension.questTypeMap
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -58,6 +59,18 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
         .title(Component.translatable("gui.previous").color(NamedTextColor.GREEN))
         .handler { -> QuestUI(player, max(page - 1, 0), category, query) }
 
+    @Element(48)
+    private val statistics = VisualkitElement.create(Material.BLAZE_POWDER)
+        .title(Component.translatable("gui.quest.statistics").color(NamedTextColor.GREEN))
+        .lore(Component.text("解放: ")
+                .append(Component.text(player.questTypeMap.size).color(NamedTextColor.GRAY))
+                .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(QuestTypes.size).color(NamedTextColor.WHITE)),
+            Component.text("達成: ")
+                .append(Component.text(player.questTypeMap.count { 0 < it.value }).color(NamedTextColor.GREEN))
+                .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(player.questTypeMap.size).color(NamedTextColor.WHITE)))
+
     @Element(49)
     private val exit = VisualkitElement.create(Material.BARRIER)
         .title(Component.translatable("gui.exit").color(NamedTextColor.RED))
@@ -100,6 +113,21 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
         for ((index, questType) in questTypes.subList(page * questTypeSlots.size, min((page + 1) * questTypeSlots.size, questTypes.size)).withIndex()) {
             val slot = questTypeSlots[index]
             setElement(slot, VisualkitElement.item(questType.icon)
+                .lore(*questType.description.map { it.colorIfAbsent(NamedTextColor.GRAY) }.toTypedArray(),
+                    Component.empty(),
+                    Component.text("-".repeat(14)).color(NamedTextColor.DARK_GRAY),
+                    let {
+                        if (questType.hasPlayLimit()) {
+                            val plays = player.questTypeMap[questType] ?: 0
+
+                            Component.text("プレイ回数: ").color(NamedTextColor.GRAY)
+                                .append(Component.text(plays).color(if (plays == questType.maxPlays) NamedTextColor.RED else NamedTextColor.YELLOW))
+                                .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
+                                .append(Component.text(questType.maxPlays!!).color(NamedTextColor.WHITE))
+                        } else {
+                            Component.text("プレイ上限なし").color(NamedTextColor.GRAY)
+                        }
+                    })
                 .handler { ->
                     val party = player.party ?: Party.solo(player)
 

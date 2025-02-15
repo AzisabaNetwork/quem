@@ -9,6 +9,9 @@ open class Registry<T: Keyed> {
     val entries: Set<T>
         get() = map.values.toSet()
 
+    val size: Int
+        get() = map.size
+
     fun get(key: Key): T? {
         return map[key]
     }

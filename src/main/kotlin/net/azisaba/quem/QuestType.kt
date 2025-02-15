@@ -43,4 +43,8 @@ class QuestType(override val key: Key, private val data: QuestType): Keyed {
     val guides: List<Guide> = data.guides.map { Guide( it) }.toList()
 
     val requirements: Set<QuestRequirement> = data.requirements.map { QuestRequirement(it.key, it.value) }.toSet()
+
+    fun hasPlayLimit(): Boolean {
+        return maxPlays != null
+    }
 }

@@ -84,9 +84,11 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
 
         guideRunnable.cancel()
 
-        for (member in party) {
-            member.questTypeMap = member.questTypeMap.also {
-                it[type] = (it[type] ?: 0) + 1
+        if (reason == Quest.EndReason.COMPLETE) {
+            for (member in party) {
+                member.questTypeMap = member.questTypeMap.also {
+                    it[type] = (it[type] ?: 0) + 1
+                }
             }
         }
     }
