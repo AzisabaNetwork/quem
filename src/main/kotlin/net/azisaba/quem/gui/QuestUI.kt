@@ -130,16 +130,19 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
                     val party = player.party ?: Party.solo(player)
 
                     if (party.leader != player) {
+                        player.sendMessage(Component.translatable("gui.quest.permission_error").color(NamedTextColor.RED))
                         player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
                         return@handler
                     }
 
                     if (! party.hasPermission(questType)) {
+                        player.sendMessage(Component.translatable("gui.quest.size_error").color(NamedTextColor.RED))
                         player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
                         return@handler
                     }
 
                     if (party.any { ! it.hasPermission(questType) }) {
+                        player.sendMessage(Component.translatable("gui.quest.member_error").color(NamedTextColor.RED))
                         player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
                         return@handler
                     }

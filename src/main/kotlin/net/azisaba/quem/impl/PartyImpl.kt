@@ -7,6 +7,8 @@ import net.azisaba.quem.Quest
 import net.azisaba.quem.QuestType
 import net.azisaba.quem.StageLike
 import net.azisaba.quem.gui.PartyUI
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 
 open class PartyImpl(entrepreneur: Player): Party {
@@ -54,6 +56,7 @@ open class PartyImpl(entrepreneur: Player): Party {
         }
 
         _members.add(member)
+        broadcast(Component.translatable("party.joined", Component.text(member.name)))
         updateGui()
     }
 
@@ -70,6 +73,7 @@ open class PartyImpl(entrepreneur: Player): Party {
             return
         }
 
+        broadcast(Component.translatable("party.quited", Component.text(member.name)))
         updateGui()
     }
 
@@ -93,6 +97,12 @@ open class PartyImpl(entrepreneur: Player): Party {
 
     override fun iterator(): Iterator<Player> {
         return members.iterator()
+    }
+
+    override fun broadcast(message: Component) {
+        forEach { it.sendMessage(Component.translatable("party.prefix").color(NamedTextColor.BLUE)
+            .appendSpace()
+            .append(message.colorIfAbsent(NamedTextColor.WHITE))) }
     }
 
     private fun updateGui() {

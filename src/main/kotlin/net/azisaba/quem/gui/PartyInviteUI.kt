@@ -55,9 +55,14 @@ class PartyInviteUI(player: Player, party: Party, private val page: Int = 0, pri
                 .handler { ->
                     if (party.isMember(p)) {
                         PartyInviteUI(player, party, page)
+                        return@handler
                     }
 
-                    party.addMember(p)
+                    if (party.leader != player) {
+                        return@handler
+                    }
+
+                    Party.Invite.create(party, player, p)
                 })
         }
     }
