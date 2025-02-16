@@ -52,7 +52,7 @@ object QuemLoader {
                 val data = Yaml.default.decodeFromStream<net.azisaba.quem.data.QuestCategory>(file.inputStream())
 
                 QuestCategories.register(QuestCategory(
-                    key = Key.key(namespace, file.nameWithoutExtension),
+                    key = Key.key(namespace, key(File(Quem.pluginDirectory, "@$namespace/categories"), file)),
                     data = data
                 ))
             }
@@ -65,7 +65,7 @@ object QuemLoader {
                 val data = Yaml.default.decodeFromStream<net.azisaba.quem.data.QuestType>(file.inputStream())
 
                 QuestTypes.register(QuestType(
-                    key = Key.key(namespace, file.nameWithoutExtension),
+                    key = Key.key(namespace, key(File(Quem.pluginDirectory, "@$namespace/types"), file)),
                     data = data
                 ))
             }
@@ -78,9 +78,20 @@ object QuemLoader {
                 val data = Yaml.default.decodeFromStream<net.azisaba.quem.data.Stage>(file.inputStream())
 
                 Stages.register(Stage(
-                    key = Key.key(namespace, file.nameWithoutExtension),
+                    key = Key.key(namespace, key(File(Quem.pluginDirectory, "@$namespace/stages"), file)),
                     data = data
                 ))
             }
+    }
+
+    private fun key(dir: File, file: File): String {
+        var key = dir.toURI().relativize(file.toURI()).path
+        val lastIndexOfDot = key.lastIndexOf('.')
+
+        if (0 < lastIndexOfDot) {
+            key = key.substring(0, lastIndexOfDot)
+        }
+
+        return key
     }
 }
