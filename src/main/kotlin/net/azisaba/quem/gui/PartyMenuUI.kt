@@ -68,7 +68,7 @@ class PartyMenuUI(player: Player, party: Party, private val page: Int = 0) : Par
     @Element(50)
     private val quit = VisualkitElement.create(Material.TNT_MINECART)
         .title(Component.translatable(if (player == party.leader) "gui.partyMenu.quit" else "gui.partyMenu.disband").color(NamedTextColor.RED).decorate(TextDecoration.BOLD))
-        .handler { -> party.removeMember(player) }
+        .handler { -> ConfirmUI(player, { party.removeMember(player) }, null) }
 
     init {
         var lastIndex = memberSlots.first()
