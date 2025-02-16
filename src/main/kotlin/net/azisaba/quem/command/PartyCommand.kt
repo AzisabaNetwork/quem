@@ -60,7 +60,7 @@ object PartyCommand {
             return Command.SINGLE_SUCCESS
         }
 
-        if (party.leader != sender) {
+        if (! party.hasInvitationPermission(sender)) {
             sender.sendMessage(Component.translatable("command.party.permission_error").color(NamedTextColor.RED))
             return Command.SINGLE_SUCCESS
         }

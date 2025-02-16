@@ -4,6 +4,7 @@ import com.tksimeji.visualkit.api.Element
 import com.tksimeji.visualkit.api.Size
 import com.tksimeji.visualkit.element.VisualkitElement
 import net.azisaba.quem.Party
+import net.azisaba.quem.Quem
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -58,11 +59,7 @@ class PartyInviteUI(player: Player, party: Party, private val page: Int = 0, pri
                         return@handler
                     }
 
-                    if (party.leader != player) {
-                        return@handler
-                    }
-
-                    Party.Invite.create(party, player, p)
+                    Bukkit.dispatchCommand(player, "${Quem.PLUGIN_ID}:party invite ${p.name}")
                 })
         }
     }

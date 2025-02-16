@@ -5,6 +5,8 @@ import com.tksimeji.visualkit.api.Element
 import com.tksimeji.visualkit.api.Mouse
 import com.tksimeji.visualkit.element.VisualkitElement
 import net.azisaba.quem.Party
+import net.azisaba.quem.Quest
+import net.azisaba.quem.extension.openCredit
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -29,6 +31,34 @@ class PartyMenuUI(player: Player, party: Party, private val page: Int = 0) : Par
     private val next = VisualkitElement.create(Material.ARROW)
         .title(Component.translatable("gui.next").color(NamedTextColor.GREEN))
         .handler { -> PartyMenuUI(player, party, min(page + 1, members.size / memberSlots.size)) }
+
+    @Element(47)
+    private val invitationSetting = VisualkitElement.create(Material.COMPARATOR)
+        .title(Component.translatable("gui.partyMenu.invitation_setting").color(NamedTextColor.GREEN))
+        .lore(Component.translatable("gui.partyMenu.invitation_setting.description").color(NamedTextColor.GRAY),
+            Component.empty(),
+            Component.translatable("gui.partyMenu.invitation_setting.leader").color(if (party.invitationSetting == Party.InvitationSetting.LEADER) NamedTextColor.GREEN else NamedTextColor.DARK_GRAY),
+            Component.translatable("gui.partyMenu.invitation_setting.all").color(if (party.invitationSetting == Party.InvitationSetting.ALL) NamedTextColor.GREEN else NamedTextColor.DARK_GRAY))
+        .handler { ->
+            if (player != party.leader) {
+                return@handler
+            }
+
+            party.invitationSetting = when (party.invitationSetting) {
+                Party.InvitationSetting.LEADER -> Party.InvitationSetting.ALL
+                Party.InvitationSetting.ALL -> Party.InvitationSetting.LEADER
+            }
+        }
+
+    @Element(48)
+    private val quest = VisualkitElement.create(Material.ENCHANTING_TABLE)
+        .title(Component.translatable("gui.partyMenu.quest").color(NamedTextColor.LIGHT_PURPLE))
+        .lore(if (! party.hasQuest()) Component.translatable("gui.partyMenu.quest.empty").color(NamedTextColor.GRAY) else party.quest!!.type.title)
+        .handler { ->
+            if (! party.hasQuest()) {
+                QuestUI(player)
+            }
+        }
 
     @Element(49)
     private val exit = VisualkitElement.create(Material.BARRIER)
@@ -76,10 +106,23 @@ class PartyMenuUI(player: Player, party: Party, private val page: Int = 0) : Par
             setElement(memberSlots[index], VisualkitElement.create(Material.CLAY_BALL))
         }
 
-        if (party.size < Party.MAX_SIZE && ! party.hasQuest()) {
+        if (party.size < Party.MAX_SIZE && ! party.hasQuest() && party.hasInvitationPermission(player)) {
             setElement(memberSlots[party.size], VisualkitElement.head("http://textures.minecraft.net/texture/dd1500e5b04c8053d40c7968330887d24b073daf1e273faf4db8b62ebd99da83")
                 .title(Component.translatable("gui.partyMenu.invite").color(NamedTextColor.GREEN))
                 .handler { -> PartyInviteUI(player, party) })
+        }
+
+        if (party.hasQuest() && player == party.leader) {
+            setElement(51, VisualkitElement.create(Material.REDSTONE_TORCH)
+                .title(Component.translatable("gui.partyMenu.cancel").color(NamedTextColor.RED))
+                .lore(Component.translatable("gui.partyMenu.cancel.description").color(NamedTextColor.GRAY))
+                .handler { ->
+                    party.quest?.end(Quest.EndReason.CANCEL)
+                })
+        } else {
+            setElement(51, VisualkitElement.create(Material.BOOK)
+                .title(Component.translatable("gui.credit").color(NamedTextColor.GREEN))
+                .handler { -> player.openCredit() })
         }
     }
 

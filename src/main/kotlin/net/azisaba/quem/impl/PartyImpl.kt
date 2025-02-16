@@ -13,6 +13,10 @@ import org.bukkit.entity.Player
 
 open class PartyImpl(entrepreneur: Player): Party {
     override var quest: Quest? = null
+        set(value) {
+            field = value
+            updateGui()
+        }
 
     override var stage: StageLike? = null
 
@@ -28,6 +32,12 @@ open class PartyImpl(entrepreneur: Player): Party {
 
     override val members: Set<Player>
         get() = _members.toSet()
+
+    override var invitationSetting: Party.InvitationSetting = Party.InvitationSetting.LEADER
+        set(value) {
+            field = value
+            updateGui()
+        }
 
     override val size: Int
         get() = members.size
@@ -85,6 +95,11 @@ open class PartyImpl(entrepreneur: Player): Party {
         val maxPlayers = type.maxPlayers
         val minPlayers = type.minPlayers
         return (maxPlayers == null || size <= maxPlayers) && (minPlayers == null || minPlayers <= size)
+    }
+
+    override fun hasInvitationPermission(member: Player): Boolean {
+        return (invitationSetting == Party.InvitationSetting.LEADER && member == leader) ||
+                (invitationSetting == Party.InvitationSetting.ALL && isMember(member))
     }
 
     override fun disband() {

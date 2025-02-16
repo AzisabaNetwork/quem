@@ -1,8 +1,13 @@
 package net.azisaba.quem.extension
 
+import net.azisaba.quem.Quem
+import net.kyori.adventure.inventory.Book
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Color
@@ -47,6 +52,25 @@ fun Player.navigateTo(location: Location, renderDistance: Double, gap: Double) {
 
         spawnParticle(Particle.DUST, particleLocation, 1, Particle.DustOptions(Color.AQUA, 0.5F))
     }
+}
+
+fun Player.openCredit() {
+    val book = Book.book(Component.text("Credit"), Component.text("tksimeji"),
+        Component.text("Quem ${Quem.plugin.pluginMeta.version}")
+            .appendNewline()
+            .appendNewline()
+            .append(Component.text("Quem is an Open Source Software."))
+            .appendNewline()
+            .append(Component.text("License: GPL-3.0 license"))
+            .appendNewline()
+            .appendNewline()
+            .append(Component.text("github.com/AzisabaNetwork/quem").color(NamedTextColor.BLUE).decorate(TextDecoration.UNDERLINED)
+                .clickEvent(ClickEvent.openUrl("https://github.com/AzisabaNetwork/quem")))
+            .appendNewline()
+            .appendNewline()
+            .append(Component.text("Developed by つきしめじ (@tksimeji).")))
+
+    openBook(book)
 }
 
 fun String.toKey(): Key {

@@ -9,6 +9,7 @@ import net.azisaba.quem.Party.Companion.party
 import net.azisaba.quem.registry.QuestCategories
 import net.azisaba.quem.registry.QuestTypes
 import net.azisaba.quem.extension.plainText
+import net.azisaba.quem.extension.openCredit
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -79,6 +80,11 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
         .title(Component.translatable("gui.search").color(NamedTextColor.GREEN))
         .handler { -> SearchUI(player, this) }
 
+    @Element(51)
+    private val credit = VisualkitElement.create(Material.BOOK)
+        .title(Component.translatable("gui.credit").color(NamedTextColor.GREEN))
+        .handler { -> player.openCredit() }
+
     @Element(53)
     private val next = VisualkitElement.create(Material.ARROW)
         .title(Component.translatable("gui.next").color(NamedTextColor.GREEN))
@@ -131,6 +137,12 @@ class QuestUI(player: Player, page: Int = 0, private val category: QuestCategory
 
                     if (party.leader != player) {
                         player.sendMessage(Component.translatable("gui.quest.permission_error").color(NamedTextColor.RED))
+                        player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
+                        return@handler
+                    }
+
+                    if (party.hasQuest()) {
+                        player.sendMessage(Component.translatable("gui.quest.already").color(NamedTextColor.RED))
                         player.playSound(player, Sound.ENTITY_PLAYER_TELEPORT, 1.0f, 0.1f)
                         return@handler
                     }

@@ -98,6 +98,11 @@ interface Party: Iterable<Player> {
         }
     }
 
+    enum class InvitationSetting {
+        LEADER,
+        ALL
+    }
+
     var quest: Quest?
 
     var stage: StageLike?
@@ -105,6 +110,8 @@ interface Party: Iterable<Player> {
     var leader: Player
 
     val members: Set<Player>
+
+    var invitationSetting: InvitationSetting
 
     val size: Int
 
@@ -123,6 +130,8 @@ interface Party: Iterable<Player> {
     }
 
     fun hasPermission(type: QuestType): Boolean
+
+    fun hasInvitationPermission(member: Player): Boolean
 
     fun broadcast(message: Component)
 
