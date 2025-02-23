@@ -49,8 +49,15 @@ class QuestType(override val key: Key, private val data: QuestType): Keyed {
 
     val requirements: Set<QuestRequirement> = data.requirements.map { QuestRequirement(it.key, it.value) }.toSet()
 
+    val scripts: Set<Script> = data.scripts.map { Script.create(it.key, it.value) }.toSet()
+        get() = field.toSet()
+
     fun hasPlayLimit(): Boolean {
         return maxPlays != null
+    }
+
+    fun fireTrigger(trigger: Script.Trigger, quest: Quest) {
+        scripts.filter { it.trigger == trigger }.forEach { it.run(quest) }
     }
 }
 

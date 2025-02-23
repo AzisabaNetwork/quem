@@ -8,7 +8,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 
-class QuestImpl(override val type: QuestType, override val party: Party) : Quest {
+class QuestImpl(override val type: QuestType, override val party: Party): Quest {
     override val players: Set<Player>
         get() = _players
 
@@ -57,6 +57,8 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
         }
 
         guideRunnable.runTaskTimerAsynchronously(Quem.plugin, 0L, 5L)
+
+        type.fireTrigger(Script.Trigger.START, this)
     }
 
     override fun removePlayer(player: Player) {
@@ -77,17 +79,23 @@ class QuestImpl(override val type: QuestType, override val party: Party) : Quest
     override fun end(reason: Quest.EndReason) {
         super.end(reason)
 
+        type.fireTrigger(Script.Trigger.END, this)
+
         party.quest = null
         panel.kill()
 
         guideRunnable.cancel()
 
         if (reason == Quest.EndReason.COMPLETE) {
+            type.fireTrigger(Script.Trigger.COMPLETE, this)
+
             for (member in party) {
                 member.questTypeMap = member.questTypeMap.also {
                     it[type] = (it[type] ?: 0) + 1
                 }
             }
+        } else {
+            type.fireTrigger(Script.Trigger.CANCEL, this)
         }
     }
 }

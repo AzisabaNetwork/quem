@@ -13,5 +13,6 @@ data class QuestType(
     val maxPlayers: Int? = null,
     val minPlayers: Int? = null,
     val guides: List<Guide> = emptyList(),
-    val requirements: Map<String, Int>
+    val requirements: Map<String, Int>,
+    val scripts: Map<String, List<String>> = emptyMap()
 )

@@ -2,7 +2,7 @@
 
 Quest manager for reincarnation-pve
 
-![Version](https://img.shields.io/badge/version-0.0.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.1.0-blue?style=flat-square)
 ![Licence](https://img.shields.io/badge/licence-GPL--3.0-red?style=flat-square)
 
 Quem は [アジ鯖](https://www.azisaba.net) の Reincarnation PvE サーバー用に開発されたクエストマネージャーです。
@@ -144,6 +144,20 @@ requirements:
   # requirement名: 必要な値 のセットで定義します
   requirement1: 3
   requirement2: 5
+
+# トリガーに応じて実行されるスクリプト
+# 次のトリガーがあります:
+# start クエストが開始されたときに呼び出されます
+# end 理由を問わずクエストが終了したときに呼び出されます
+# complete クエストが達成された終了したときに呼び出されます
+# cancel クエストが達成されずに終了したときに呼び出されます
+scripts:
+  start: # トリガーをキーとする文字列リストでスクリプトを表現します
+    - 'command arg1 arg2'
+  start+20: # トリガーに「+整数」を続けることで、tick数で遅延を指定できます
+    - 'command arg1 arg2'
+  complete:
+    - ':quem grant % rcpve:example' # これはコマンドの拡張構文です. 「:」から開始されたコマンドは、クエストのメンバー数だけ繰り返し実行されます.このとき「%」部分はプレイヤー名に置き換えられます.
 ```
 
 ## クエストカテゴリ
