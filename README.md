@@ -37,6 +37,28 @@ panel:
   footer: '&7いますぐ &eazisaba.net&7 で遊べ！'
 ```
 
+## コマンド
+
+```shell
+# 任意のプレイヤーにクエストタイプを解放します
+/quem grant <player(s)> <quest type>
+
+# 任意のクエストの進捗を変更します
+/quem progress <player> <requirement> <formula>
+# formula は 「+2」「-3」「*5」「/7」「=11」のような形式で記述します
+# formula で式のはじめの演算子を省略した場合、「=」として扱われます
+# formula はダブルクォーテーションで「"*2"」のように囲むことが推奨されます
+
+# 設定ファイルとすべての名前空間を再読み込みします
+/quem reload
+
+# 任意のプレイヤーからクエストタイプをはく奪します
+/quem revoke <player(s)> <quest type>
+
+# 任意のクエストをステージにマウント/アンマウントします
+/quem stage <mount/unmount> <player(s)> <stage>
+```
+
 ## 名前空間
 
 名前空間はこのあと紹介するクエストタイプやクエストカテゴリ、ステージといったオブジェクトを分類します。
