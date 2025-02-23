@@ -18,7 +18,7 @@ object FormulaArgumentType: CustomArgumentType<FormulaArgumentType.Formula, Stri
     }
 
     override fun parse(reader: StringReader): Formula {
-        val input = reader.readString()
+        val input = StringArgumentType.string().parse(reader)
         val result = regex.find(input)
 
         return if (result != null) {
