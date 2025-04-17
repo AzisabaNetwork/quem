@@ -2,7 +2,7 @@ package net.azisaba.quem
 
 import net.azisaba.quem.impl.QuestImpl
 import net.azisaba.quem.impl.SoloPartyImpl
-import net.azisaba.quem.gui.QuestPanelUI
+import net.azisaba.quem.gui.QuestPanelGui
 import org.bukkit.entity.Player
 
 interface Quest {
@@ -27,7 +27,7 @@ interface Quest {
 
     val guide: Guide?
 
-    val panel: QuestPanelUI
+    val panel: QuestPanelGui
 
     fun removePlayer(player: Player)
 

@@ -1,12 +1,12 @@
 package net.azisaba.quem.impl
 
-import com.tksimeji.visualkit.Visualkit
+import com.tksimeji.kunectron.Kunectron
 import net.azisaba.quem.Party
 import net.azisaba.quem.Party.Companion.hasParty
 import net.azisaba.quem.Quest
 import net.azisaba.quem.QuestType
 import net.azisaba.quem.StageLike
-import net.azisaba.quem.gui.PartyUI
+import net.azisaba.quem.gui.PartyGui
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
@@ -105,9 +105,10 @@ open class PartyImpl(entrepreneur: Player): Party {
     override fun disband() {
         members.forEach(this::removeMember)
 
-        Visualkit.getSessions(PartyUI::class.java)
+        Kunectron.getGuis()
+            .filterIsInstance<PartyGui>()
             .filter { it.party == this }
-            .forEach(PartyUI::close)
+            .forEach(PartyGui::useClose)
     }
 
     override fun iterator(): Iterator<Player> {
@@ -121,8 +122,9 @@ open class PartyImpl(entrepreneur: Player): Party {
     }
 
     private fun updateGui() {
-        Visualkit.getSessions(PartyUI::class.java)
+        Kunectron.getGuis()
+            .filterIsInstance<PartyGui>()
             .filter { it.party == this }
-            .forEach(PartyUI::update)
+            .forEach(PartyGui::update)
     }
 }

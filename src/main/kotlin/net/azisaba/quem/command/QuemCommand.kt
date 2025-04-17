@@ -4,15 +4,16 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
+import com.tksimeji.kunectron.Kunectron
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver
 import net.azisaba.quem.*
 import net.azisaba.quem.Party.Companion.party
-import net.azisaba.quem.gui.PartyCreateUI
-import net.azisaba.quem.gui.PartyMenuUI
-import net.azisaba.quem.gui.QuestUI
+import net.azisaba.quem.gui.PartyCreateGui
+import net.azisaba.quem.gui.PartyMenuGui
+import net.azisaba.quem.gui.QuestGui
 import net.azisaba.quem.extension.CommandSyntaxException
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
@@ -26,9 +27,9 @@ object QuemCommand {
                     val player = (ctx.source.executor.takeIf { it is Player } ?: return@executes Command.SINGLE_SUCCESS) as Player
 
                     if (player.party == null) {
-                        PartyCreateUI(player)
+                        Kunectron.create(PartyCreateGui(player))
                     } else {
-                        PartyMenuUI(player, player.party!!)
+                        Kunectron.create(PartyMenuGui(player, player.party!!))
                     }
 
                     Command.SINGLE_SUCCESS
@@ -37,7 +38,7 @@ object QuemCommand {
                 .requires { it.sender.hasPermission("quem.debug") }
                 .executes { ctx ->
                     val player = (ctx.source.executor.takeIf { it is Player } ?: return@executes Command.SINGLE_SUCCESS) as Player
-                    QuestUI(player)
+                    Kunectron.create(QuestGui(player))
                     Command.SINGLE_SUCCESS
                 })
             .then(Commands.literal("grant")
@@ -172,7 +173,7 @@ object QuemCommand {
 
         for (target in targets) {
             target.party?.takeIf { it.hasQuest() }?.let {
-                if (stage.isMounted(it)) {
+                if (!stage.isMounted(it)) {
                     return@let
                 }
 

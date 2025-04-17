@@ -5,8 +5,8 @@ bootstrapper: net.azisaba.quem.QuemBootstrap
 api-version: '1.21'
 dependencies:
   server:
-   Visualkit:
-     load: AFTER
+    kunectron:
+      load: AFTER
 permissions:
   quem.debug:
     default: op

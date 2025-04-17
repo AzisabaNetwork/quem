@@ -1,7 +1,8 @@
 package net.azisaba.quem.impl
 
+import com.tksimeji.kunectron.Kunectron
 import net.azisaba.quem.*
-import net.azisaba.quem.gui.QuestPanelUI
+import net.azisaba.quem.gui.QuestPanelGui
 import net.azisaba.quem.extension.navigateTo
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
@@ -19,7 +20,7 @@ class QuestImpl(override val type: QuestType, override val party: Party): Quest 
     override val guide: Guide?
         get() = type.guides.firstOrNull { it.isFilled(this) }
 
-    override val panel: QuestPanelUI
+    override val panel: QuestPanelGui
 
     private val guideRunnable = object : BukkitRunnable() {
         override fun run() {
@@ -48,11 +49,11 @@ class QuestImpl(override val type: QuestType, override val party: Party): Quest 
             throw IllegalArgumentException("The party includes a player who does not have the permission to play")
         }
 
-        panel = QuestPanelUI(this)
+        panel = Kunectron.create(QuestPanelGui(this))
         party.quest = this
 
         party.members.forEach {
-            panel.addAudience(it)
+            panel.useAddPlayer(it)
             it.teleport(type.location)
         }
 
@@ -67,7 +68,7 @@ class QuestImpl(override val type: QuestType, override val party: Party): Quest 
         }
 
         _players.remove(player)
-        panel.removeAudience(player)
+        panel.useRemovePlayer(player)
         val lobbyConfig = Quem.pluginConfig.lobby
         player.teleport(if (lobbyConfig != null) net.azisaba.quem.data.Location(lobbyConfig) else originalLocations[player]!!)
     }
@@ -82,7 +83,7 @@ class QuestImpl(override val type: QuestType, override val party: Party): Quest 
         type.fireTrigger(Script.Trigger.END, this)
 
         party.quest = null
-        panel.kill()
+        panel.useClose()
 
         guideRunnable.cancel()
 
