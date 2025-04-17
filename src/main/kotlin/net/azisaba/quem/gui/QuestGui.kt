@@ -97,22 +97,7 @@ class QuestGui(@ChestGui.Player private val player: Player, private val page: In
 
         for ((index, questType) in questTypes.subList(page * QUEST_TYPE_INDEXES.size, min((page + 1) * QUEST_TYPE_INDEXES.size, questTypes.size)).withIndex()) {
             val questTypeIndex = QUEST_TYPE_INDEXES[index]
-            useElement(questTypeIndex, Element.item(questType.icon)
-                .lore(*questType.description.map { it.colorIfAbsent(NamedTextColor.GRAY) }.toTypedArray(),
-                    Component.empty(),
-                    Component.text("-".repeat(14)).color(NamedTextColor.DARK_GRAY),
-                    let {
-                        if (questType.hasPlayLimit()) {
-                            val plays = player.questTypeMap[questType] ?: 0
-
-                            Component.text("プレイ回数: ").color(NamedTextColor.GRAY)
-                                .append(Component.text(plays).color(if (plays == questType.maxPlays) NamedTextColor.RED else NamedTextColor.YELLOW))
-                                .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
-                                .append(Component.text(questType.maxPlays!!).color(NamedTextColor.WHITE))
-                        } else {
-                            Component.text("プレイ上限なし").color(NamedTextColor.GRAY)
-                        }
-                    })
+            useElement(questTypeIndex, questType.createItemElement(player)
                 .handler { ->
                     val party = player.party ?: Party.solo(player)
 

@@ -15,7 +15,7 @@ class ConfirmGui(@ChestGui.Player private val player: Player, onAccept: Runnable
     private val title = Component.translatable("gui.confirm")
 
     @ChestGui.Size
-    private val size = ChestGui.ChestSize.SIZE_36
+    private val size = ChestGui.ChestSize.SIZE_27
 
     @ChestGui.Element(index = [11])
     private val accept = Element.item(ItemType.GREEN_TERRACOTTA)

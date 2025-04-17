@@ -1,5 +1,7 @@
 package net.azisaba.quem
 
+import com.tksimeji.kunectron.element.Element
+import com.tksimeji.kunectron.element.ItemElement
 import net.azisaba.quem.data.ItemStack
 import net.azisaba.quem.data.QuestType
 import net.azisaba.quem.registry.Keyed
@@ -58,6 +60,29 @@ class QuestType(override val key: Key, private val data: QuestType): Keyed {
 
     fun fireTrigger(trigger: Script.Trigger, quest: Quest) {
         scripts.filter { it.trigger == trigger }.forEach { it.run(quest) }
+    }
+
+    fun createItemElement(): ItemElement {
+        return Element.item(icon).title(title)
+    }
+
+    fun createItemElement(player: Player): ItemElement {
+        val lore = description.map { it.colorIfAbsent(NamedTextColor.GRAY) }.toMutableList()
+        lore.add(Component.empty())
+        lore.add(Component.text("-".repeat(14)).color(NamedTextColor.DARK_GRAY))
+
+        if (hasPlayLimit()) {
+            val plays = player.questTypeMap[this] ?: 0
+            lore.add(Component.text("プレイ回数: ").color(NamedTextColor.GRAY)
+                .append(Component.text(plays).color(if (plays == maxPlays) NamedTextColor.RED else NamedTextColor.YELLOW))
+                .append(Component.text("/").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(maxPlays!!).color(NamedTextColor.WHITE)))
+        } else {
+            lore.add(Component.text("プレイ上限なし").color(NamedTextColor.GRAY))
+        }
+
+        return createItemElement()
+            .lore(lore)
     }
 }
 

@@ -10,11 +10,13 @@ import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver
 import net.azisaba.quem.*
+import net.azisaba.quem.Party.Companion.hasParty
 import net.azisaba.quem.Party.Companion.party
 import net.azisaba.quem.gui.PartyCreateGui
 import net.azisaba.quem.gui.PartyMenuGui
 import net.azisaba.quem.gui.QuestGui
 import net.azisaba.quem.extension.CommandSyntaxException
+import net.azisaba.quem.gui.QuestMenuGui
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
@@ -38,7 +40,12 @@ object QuemCommand {
                 .requires { it.sender.hasPermission("quem.debug") }
                 .executes { ctx ->
                     val player = (ctx.source.executor.takeIf { it is Player } ?: return@executes Command.SINGLE_SUCCESS) as Player
-                    Kunectron.create(QuestGui(player))
+                    val quest = player.party?.quest
+                    if (quest != null) {
+                        Kunectron.create(QuestMenuGui(player, quest))
+                    } else {
+                        Kunectron.create(QuestGui(player))
+                    }
                     Command.SINGLE_SUCCESS
                 })
             .then(Commands.literal("grant")
